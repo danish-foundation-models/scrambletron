@@ -1,25 +1,33 @@
-from presidio_anonymizer import OperatorConfig
-import typer
+"""Main entry point for anonymization methods."""
 
-from pii_removal.anonymizer import InstanceCounterAnonymizer, InstanceReplacerAnonymizer
+import typer
+from presidio_anonymizer import OperatorConfig
+
 from pii_removal.utils import create_analyzer, create_anonymizer
 
 app = typer.Typer(name="PII-Removal CLI")
 
 
-
 @app.command()
 def anonymize(text: str, language: str = "da"):
+    """Anonymize a piece of text in a given language.
+
+    Args:
+        text (str): The text to be anonymized.
+        language (str, optional): Language of the text. Used for selecting relevant models. Defaults to "da".
+    """
     analyzer = create_analyzer()
     analysis_result = analyzer.analyze(text, language=language)
-    
 
     entity_mapping = dict()
     anonymizer = create_anonymizer()
-    anonymizer.add_anonymizer(InstanceReplacerAnonymizer)
-    result = anonymizer.anonymize(text=text, analyzer_results=analysis_result, operators={
-        "DEFAULT": OperatorConfig(
-            "entity_replacer", {"entity_mapping": entity_mapping}
-        )
-    })
+    result = anonymizer.anonymize(
+        text=text,
+        analyzer_results=analysis_result,
+        operators={
+            "DEFAULT": OperatorConfig(
+                "entity_replacer", {"entity_mapping": entity_mapping}
+            )
+        },
+    )
     print(result.text)
