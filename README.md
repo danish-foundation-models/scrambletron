@@ -1,3 +1,3 @@
-# Pii-removal
+# Scrambletron
 
-CLI for removing PII in text. Uses Presidio.
+Tool for removing PII in text. Uses Presidio.
