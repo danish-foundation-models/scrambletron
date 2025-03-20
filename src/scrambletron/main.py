@@ -2,12 +2,10 @@
 
 import warnings
 from pathlib import Path
-from typing import Literal
 
 import typer
-from presidio_anonymizer import OperatorConfig
 
-from pii_removal.utils import create_analyzer, create_anonymizer
+from scrambletron.utils import create_analyzer, create_anonymizer
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 

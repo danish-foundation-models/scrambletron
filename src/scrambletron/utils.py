@@ -11,7 +11,9 @@ def create_analyzer():
     from presidio_analyzer import AnalyzerEngine
     from presidio_analyzer.nlp_engine import NlpEngineProvider
     from presidio_analyzer.predefined_recognizers import (
-        PhoneRecognizer, DateRecognizer, IpRecognizer
+        DateRecognizer,
+        IpRecognizer,
+        PhoneRecognizer,
     )
 
     hf_model = {
@@ -65,8 +67,11 @@ def create_analyzer():
     )
 
     analyzer.registry.add_recognizer(IpRecognizer(supported_language="en"))
-    analyzer.registry.add_recognizer(DateRecognizer(context=["dato", "d.", "d.d.", "fødselsdag"], supported_language="da"))
-
+    analyzer.registry.add_recognizer(
+        DateRecognizer(
+            context=["dato", "d.", "d.d.", "fødselsdag"], supported_language="da"
+        )
+    )
 
     return analyzer
 
@@ -78,8 +83,6 @@ def create_anonymizer():
         AnonymizerEngine: Engine for anonymizing text.
     """
     from presidio_anonymizer import AnonymizerEngine
-
-    from pii_removal.anonymizer import InstanceReplacerAnonymizer
 
     # Initialize the engine:
     engine = AnonymizerEngine()

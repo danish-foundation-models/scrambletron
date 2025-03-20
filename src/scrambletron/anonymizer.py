@@ -17,10 +17,13 @@ class InstanceCounterAnonymizer(Operator):
 
     def operate(self, text: str, params: dict | None = None) -> str:
         """Anonymize the input text."""
+        if not params:
+            raise ValueError("You need to supply parameters.")
+
         entity_type: str = params["entity_type"]
 
         # entity_mapping is a dict of dicts containing mappings per entity type
-        entity_mapping: dict[dict:str] = params["entity_mapping"]
+        entity_mapping: dict[str, dict] = params["entity_mapping"]
 
         entity_mapping_for_type = entity_mapping.get(entity_type)
         if not entity_mapping_for_type:
@@ -51,6 +54,8 @@ class InstanceCounterAnonymizer(Operator):
 
     def validate(self, params: dict | None = None) -> None:
         """Validate operator parameters."""
+        if not params:
+            raise ValueError("You need to supply parameters.")
         if "entity_mapping" not in params:
             msg = "An input Dict called `entity_mapping` is required."
             raise ValueError(msg)
@@ -81,10 +86,13 @@ class InstanceReplacerAnonymizer(Operator):
 
     def operate(self, text: str, params: dict | None = None) -> str:
         """Anonymize the input text."""
+        if not params:
+            raise ValueError("You need to supply parameters.")
+
         entity_type: str = params["entity_type"]
 
         # entity_mapping is a dict of dicts containing mappings per entity type
-        entity_mapping: dict[dict:str] = params["entity_mapping"]
+        entity_mapping: dict[str, dict] = params["entity_mapping"]
 
         entity_mapping_for_type = entity_mapping.get(entity_type)
         if not entity_mapping_for_type:
@@ -143,6 +151,8 @@ class InstanceReplacerAnonymizer(Operator):
 
     def validate(self, params: dict | None = None) -> None:
         """Validate operator parameters."""
+        if not params:
+            raise ValueError("You need to supply parameters.")
         if "entity_mapping" not in params:
             msg = "An input Dict called `entity_mapping` is required."
             raise ValueError(msg)
