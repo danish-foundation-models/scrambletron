@@ -13,6 +13,7 @@ def create_analyzer():
     from presidio_analyzer.pattern import Pattern
     from presidio_analyzer.pattern_recognizer import PatternRecognizer
     from presidio_analyzer.predefined_recognizers import (
+        CreditCardRecognizer,
         DateRecognizer,
         EmailRecognizer,
         IpRecognizer,
@@ -60,6 +61,23 @@ def create_analyzer():
     # Pass the created NLP engine and supported_languages to the AnalyzerEngine
     analyzer = AnalyzerEngine(
         nlp_engine=nlp_engine_with_danish, supported_languages=["en", "da"]
+    )
+
+    analyzer.registry.add_recognizer(
+        CreditCardRecognizer(
+            supported_language="da",
+            context=[
+                "kreditkort",
+                "kreditkortnummer",
+                "kortnummer",
+                "kort nr.",
+                "kortnr.",
+                "dankort",
+                "dankortnummer",
+                "dankort nr.",
+                "dankortnr.",
+            ],
+        )
     )
 
     analyzer.registry.add_recognizer(
