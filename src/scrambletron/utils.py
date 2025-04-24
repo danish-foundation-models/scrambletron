@@ -12,6 +12,7 @@ def create_analyzer():
     from presidio_analyzer.nlp_engine import NlpEngineProvider
     from presidio_analyzer.predefined_recognizers import (
         DateRecognizer,
+        EmailRecognizer,
         IpRecognizer,
         PhoneRecognizer,
     )
@@ -63,6 +64,20 @@ def create_analyzer():
             ["tlf.", "telefon", "tlf. nr."],
             supported_language="da",
             supported_regions=SUPPORTED_REGIONS,
+        )
+    )
+
+    analyzer.registry.add_recognizer(
+        EmailRecognizer(
+            context=[
+                "email",
+                "mail",
+                "e-mail",
+                "e-mail adresse",
+                "mailadresse",
+                "emailadresse",
+            ],
+            supported_language="da",
         )
     )
 
