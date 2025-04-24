@@ -1,0 +1,1 @@
+"""Scrambletron custom recognizers module."""
