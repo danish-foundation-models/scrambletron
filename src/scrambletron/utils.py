@@ -10,6 +10,8 @@ def create_analyzer():
     from phonenumbers import SUPPORTED_REGIONS
     from presidio_analyzer import AnalyzerEngine
     from presidio_analyzer.nlp_engine import NlpEngineProvider
+    from presidio_analyzer.pattern import Pattern
+    from presidio_analyzer.pattern_recognizer import PatternRecognizer
     from presidio_analyzer.predefined_recognizers import (
         DateRecognizer,
         EmailRecognizer,
@@ -59,6 +61,18 @@ def create_analyzer():
     analyzer = AnalyzerEngine(
         nlp_engine=nlp_engine_with_danish, supported_languages=["en", "da"]
     )
+
+    analyzer.registry.add_recognizer(
+        PatternRecognizer(
+            supported_language="da",
+            supported_entity="DK_DRIVER_LICENSE",
+            patterns=[  # Driver license number is just 8 numbers, so this pattern is very weak.
+                Pattern("DK_DRIVER_LICENSE1 (very weak)", r"\b[0-9]{8}\b", 0.05)
+            ],
+            context=["kørekortnummer", "kørekort nr.", "kørekortnr.", "kørekort nr"],
+        )
+    )
+
     analyzer.registry.add_recognizer(
         PhoneRecognizer(
             ["tlf.", "telefon", "tlf. nr."],
