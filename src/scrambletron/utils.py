@@ -113,7 +113,7 @@ def create_analyzer():
         )
     )
 
-    analyzer.registry.add_recognizer(IpRecognizer(supported_language="en"))
+    analyzer.registry.add_recognizer(IpRecognizer(supported_language="da"))
     analyzer.registry.add_recognizer(
         DateRecognizer(
             context=["dato", "d.", "d.d.", "fødselsdag"], supported_language="da"
