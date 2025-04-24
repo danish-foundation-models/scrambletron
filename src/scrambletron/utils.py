@@ -20,6 +20,8 @@ def create_analyzer():
         PhoneRecognizer,
     )
 
+    from .recognizers.cpr_recognizer import CPRRecognizer
+
     hf_model = {
         "en": "FacebookAI/xlm-roberta-large-finetuned-conll03-english",
         "da": "alexandrainst/da-ner-base",
@@ -62,6 +64,8 @@ def create_analyzer():
     analyzer = AnalyzerEngine(
         nlp_engine=nlp_engine_with_danish, supported_languages=["en", "da"]
     )
+
+    analyzer.registry.add_recognizer(CPRRecognizer(supported_language="da"))
 
     analyzer.registry.add_recognizer(
         CreditCardRecognizer(
