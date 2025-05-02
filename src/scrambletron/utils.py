@@ -1,7 +1,13 @@
 """Utilities for anonymizing texts."""
 
+import typing as t
 
-def create_analyzer():
+if t.TYPE_CHECKING:
+    from presidio_analyzer import AnalyzerEngine, BatchAnalyzerEngine
+    from presidio_anonymizer import AnonymizerEngine, BatchAnonymizerEngine
+
+
+def create_analyzer() -> AnalyzerEngine:
     """Create a analyzer engine using Presidio.
 
     Returns:
@@ -102,6 +108,21 @@ def create_analyzer():
             supported_regions=SUPPORTED_REGIONS,
         )
     )
+    # entity_mapping = {
+    #     "first-name": "PERSON",
+    #     "last-name": "PERSON",
+    # }
+
+    # gliner_recognizer = GLiNERRecognizer(
+    #     model_name="urchade/gliner_multi-v2.1",
+    #     supported_language="da",
+    #     entity_mapping=entity_mapping,
+    #     flat_ner=False,
+    #     multi_label=True,
+    #     map_location="cpu",
+    # )
+
+    # analyzer.registry.add_recognizer(gliner_recognizer)
 
     analyzer.registry.add_recognizer(
         EmailRecognizer(
@@ -127,7 +148,7 @@ def create_analyzer():
     return analyzer
 
 
-def create_anonymizer():
+def create_anonymizer() -> AnonymizerEngine:
     """Create an anonymizer engine.
 
     Returns:
@@ -135,8 +156,37 @@ def create_anonymizer():
     """
     from presidio_anonymizer import AnonymizerEngine
 
+    from .anonymizer import InstanceReplacerAnonymizer
+
     # Initialize the engine:
     engine = AnonymizerEngine()
-    # engine.add_anonymizer(InstanceReplacerAnonymizer)
+    # engine.add_anonymizer(InstanceCounterAnonymizer)
+    engine.add_anonymizer(InstanceReplacerAnonymizer)
 
     return engine
+
+
+def create_batch_analyzer() -> BatchAnalyzerEngine:
+    """Create a batch analyzer engine.
+
+    Returns:
+        BatchAnalyzerEngine: Engine for analyzing text in batches.
+    """
+    from presidio_analyzer import BatchAnalyzerEngine
+
+    engine = create_analyzer()
+
+    return BatchAnalyzerEngine(engine)
+
+
+def create_batch_anonymizer() -> BatchAnonymizerEngine:
+    """Create a batch anonymizer engine.
+
+    Returns:
+        BatchAnonymizerEngine: Engine for anonymizing text in batches.
+    """
+    from presidio_anonymizer import BatchAnonymizerEngine
+
+    engine = create_anonymizer()
+
+    return BatchAnonymizerEngine(engine)
