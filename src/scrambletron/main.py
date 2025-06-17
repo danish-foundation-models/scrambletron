@@ -53,7 +53,6 @@ def anonymize_file(file: Path, output: Path, language: str = "da"):
         language (str, optional): Language of the text. Used for selecting relevant models. Defaults to "da".
     """
     texts = file.open().readlines()
-    texts = [text for text in texts if text.strip()]
     analyzer = create_batch_analyzer()
     analysis_result = analyzer.analyze_iterator(texts, language=language)
 
