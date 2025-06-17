@@ -7,7 +7,7 @@ if t.TYPE_CHECKING:
     from presidio_anonymizer import AnonymizerEngine, BatchAnonymizerEngine
 
 
-def create_analyzer() -> AnalyzerEngine:
+def create_analyzer() -> "AnalyzerEngine":
     """Create a analyzer engine using Presidio.
 
     Returns:
@@ -22,45 +22,21 @@ def create_analyzer() -> AnalyzerEngine:
         CreditCardRecognizer,
         DateRecognizer,
         EmailRecognizer,
+        GLiNERRecognizer,
         IpRecognizer,
         PhoneRecognizer,
+        UrlRecognizer,
     )
 
     from .recognizers.cpr_recognizer import CPRRecognizer
 
-    hf_model = {
-        "en": "FacebookAI/xlm-roberta-large-finetuned-conll03-english",
-        "da": "alexandrainst/da-ner-base",
-    }
-
-    # Create configuration containing engine name and models
     configuration = {
-        "nlp_engine_name": "transformers",
+        "nlp_engine_name": "spacy",
         "models": [
-            {
-                "lang_code": "da",
-                "model_name": {
-                    "spacy": "da_core_news_trf",
-                    "transformers": hf_model["da"],
-                },
-            },
-            {
-                "lang_code": "en",
-                "model_name": {
-                    "spacy": "en_core_web_md",
-                    "transformers": hf_model["en"],
-                },
-            },
+            {"lang_code": "da", "model_name": "da_core_news_trf"},
+            {"lang_code": "en", "model_name": "en_core_web_md"},
         ],
     }
-
-    # configuration = {
-    #     "nlp_engine_name": "spacy",
-    #     "models": [
-    #         {"lang_code": "da", "model_name": "da_core_news_trf"},
-    #         {"lang_code": "en", "model_name": "en_core_web_md"},
-    #     ],
-    # }
 
     # Create NLP engine based on configuration
     provider = NlpEngineProvider(nlp_configuration=configuration)
@@ -108,21 +84,28 @@ def create_analyzer() -> AnalyzerEngine:
             supported_regions=SUPPORTED_REGIONS,
         )
     )
-    # entity_mapping = {
-    #     "first-name": "PERSON",
-    #     "last-name": "PERSON",
-    # }
+    entity_mapping = {
+        "name": "PERSON",
+        "person": "PERSON",
+        "city": "LOCATION",
+        "location": "LOCATION",
+        "address": "LOCATION",
+        "country": "LOCATION",
+        "website": "URL",
+    }
 
-    # gliner_recognizer = GLiNERRecognizer(
-    #     model_name="urchade/gliner_multi-v2.1",
-    #     supported_language="da",
-    #     entity_mapping=entity_mapping,
-    #     flat_ner=False,
-    #     multi_label=True,
-    #     map_location="cpu",
-    # )
+    gliner_recognizer = GLiNERRecognizer(
+        model_name="urchade/gliner_multi-v2.1",
+        supported_language="da",
+        entity_mapping=entity_mapping,
+        flat_ner=False,
+        multi_label=True,
+        map_location="cpu",
+    )
 
-    # analyzer.registry.add_recognizer(gliner_recognizer)
+    analyzer.registry.add_recognizer(gliner_recognizer)
+    # remove spacy recognizer because we dont want it to interfere with gliner (as per presidio docs)
+    analyzer.registry.remove_recognizer("SpacyRecognizer")
 
     analyzer.registry.add_recognizer(
         EmailRecognizer(
@@ -138,6 +121,10 @@ def create_analyzer() -> AnalyzerEngine:
         )
     )
 
+    analyzer.registry.add_recognizer(
+        UrlRecognizer(context=["url", "website", "hjemmeside"], supported_language="da")
+    )
+
     analyzer.registry.add_recognizer(IpRecognizer(supported_language="da"))
     analyzer.registry.add_recognizer(
         DateRecognizer(
@@ -148,7 +135,7 @@ def create_analyzer() -> AnalyzerEngine:
     return analyzer
 
 
-def create_anonymizer() -> AnonymizerEngine:
+def create_anonymizer() -> "AnonymizerEngine":
     """Create an anonymizer engine.
 
     Returns:
@@ -166,7 +153,7 @@ def create_anonymizer() -> AnonymizerEngine:
     return engine
 
 
-def create_batch_analyzer() -> BatchAnalyzerEngine:
+def create_batch_analyzer() -> "BatchAnalyzerEngine":
     """Create a batch analyzer engine.
 
     Returns:
@@ -179,7 +166,7 @@ def create_batch_analyzer() -> BatchAnalyzerEngine:
     return BatchAnalyzerEngine(engine)
 
 
-def create_batch_anonymizer() -> BatchAnonymizerEngine:
+def create_batch_anonymizer() -> "BatchAnonymizerEngine":
     """Create a batch anonymizer engine.
 
     Returns:
