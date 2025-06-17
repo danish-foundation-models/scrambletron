@@ -59,79 +59,14 @@ class CPRRecognizer(PatternRecognizer):
             day = int(text[0:2])
             month = int(text[2:4])
             year = int(text[4:6])
-            seq_number = text[6:10]
+            _seq_number = text[6:10]
         except ValueError:
             return False
 
-        # Derive the full year using the official CPR rules.
+        # Validate the date.
         try:
-            full_year = self._derive_full_year(year, seq_number)
+            datetime.strptime(f"{year}-{month}-{day}", "%y-%m-%d")
         except ValueError:
-            return False
-
-        # Validate the date using the derived full year.
-        try:
-            datetime.strptime(f"{full_year}-{month}-{day}", "%Y-%m-%d")
-        except ValueError:
-            return False
-
-        # Calculate the check digit using weights for the first 9 digits.
-        weights = [4, 3, 2, 7, 6, 5, 4, 3, 2]
-        total = sum(int(text[i]) * weights[i] for i in range(9))
-        remainder = total % 11
-
-        # Calculate computed check digit.
-        if remainder == 0:
-            computed_digit = 0
-        else:
-            computed_digit = 11 - remainder
-
-        # If the computed check digit is 10, the number is considered invalid.
-        if computed_digit == 10:
-            return False
-
-        # Finally, compare the computed check digit with the 10th digit.
-        if computed_digit != int(text[9]):
             return False
 
         return True
-
-    def _derive_full_year(self, year: int, seq_number: str) -> Optional[int]:
-        """Derives the full year of a CPR number, based on the year and sequence number.
-
-        It is determined based on the rules from the official CPR documentation:
-        https://www.cpr.dk/media/12066/personnummeret-i-cpr.pdf
-
-        Args:
-            year: The two-digit year part of the CPR number.
-            seq_number: The sequence number part of the CPR number.
-
-        Returns:
-            The full year if derived successfully, None otherwise.
-
-        Raises:
-            ValueError: If the CPR number is invalid.
-        """
-        try:
-            digit7 = int(seq_number[0])
-        except ValueError:
-            raise ValueError("Invalid CPR: non-numeric characters found.")
-
-        if 0 <= digit7 <= 3:
-            return 1900 + year
-        elif digit7 == 4 or digit7 == 9:
-            if year <= 36:
-                return 2000 + year
-            elif year >= 36 and year <= 99:
-                return 1900 + year
-            else:
-                raise ValueError("Invalid CPR number!")
-        elif digit7 in [5, 6, 7, 8]:
-            if year <= 57:
-                return 2000 + year
-            elif year >= 58 and year <= 99:
-                return 1800 + year
-            else:
-                raise ValueError("Invalid CPR number!")
-        else:
-            raise ValueError("Invalid 7th digit.")
