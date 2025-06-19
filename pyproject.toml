@@ -3,7 +3,10 @@ name = "Scrambletron"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [{ name = "kris927b", email = "kristian.smed.noergaard@gmail.com" }]
+authors = [
+    { name = "kris927b", email = "kristian.smed.noergaard@gmail.com" },
+    { name = "viggo-gascou", email = "git@viggogascou.dev" },
+]
 requires-python = ">=3.11"
 dependencies = [
     "da-core-news-trf",
@@ -58,4 +61,6 @@ extend-select = ["I", "D"]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
+convention = "google"
+convention = "google"
 convention = "google"
