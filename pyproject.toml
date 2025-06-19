@@ -62,5 +62,3 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-convention = "google"
-convention = "google"
