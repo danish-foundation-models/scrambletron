@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Callable
 
 from faker import Faker
-from faker.providers import person
+from faker.providers import internet, person
 from gender_guesser.detector import Detector
 from presidio_anonymizer.operators import Operator, OperatorType
 
@@ -82,6 +82,7 @@ class InstanceReplacerAnonymizer(Operator):
         super().__init__()
         self.fake = Faker(locale="da_DK")
         self.fake.add_provider(person)
+        self.fake.add_provider(internet)
         self.d = Detector(case_sensitive=False)
 
     def operate(self, text: str, params: dict | None = None) -> str:
@@ -132,6 +133,10 @@ class InstanceReplacerAnonymizer(Operator):
             return self.fake.address().replace("\n", " ")
         if entity == "PHONE_NUMBER":
             return self.fake.phone_number()
+        if entity == "EMAIL_ADDRESS":
+            return self.fake.safe_email()
+        if entity == "IP_ADDRESS":
+            return self.fake.ipv4()
         return ""
 
     def _guess_gender(self, text: str) -> Callable[(...), str]:

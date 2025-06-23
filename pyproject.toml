@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "kris927b", email = "kristian.smed.noergaard@gmail.com" }
+    { name = "kris927b", email = "kristian.smed.noergaard@gmail.com" },
+    { name = "viggo-gascou", email = "git@viggogascou.dev" },
 ]
 requires-python = ">=3.11"
 dependencies = [
@@ -12,8 +13,8 @@ dependencies = [
     "en-core-web-md",
     "faker>=33.1.0",
     "gender-guesser>=0.4.0",
-    "presidio-analyzer[transformers]>=2.2.355",
-    "presidio-anonymizer>=2.2.355",
+    "presidio-analyzer[gliner,transformers]>=2.2.358",
+    "presidio-anonymizer>=2.2.358",
     "typer>=0.15.1",
 ]
 
@@ -25,7 +26,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.optional-dependencies]
-dev = ["black==23.9.1", "ruff==0.1.0", "pyright==1.1.331", "pre-commit==3.5.0"]
+dev = ["black==23.9.1", "pyright==1.1.331", "pre-commit==3.5.0", "ruff>=0.11.6"]
 test = [
     "pytest==6.2.5",
     "pytest-lazy-fixture==0.6.3",
@@ -40,16 +41,8 @@ en-core-web-md = { url = "https://github.com/explosion/spacy-models/releases/dow
 [tool.ruff]
 target-version = "py311"
 line-length = 88
-exclude = [
-    ".git",
-    ".mypy_cache",
-    ".pytest_cache",
-    ".ruff_cache",
-    ".venv",
-]
-extend-include = [
-    "*.ipynb",
-]
+exclude = [".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".venv"]
+extend-include = ["*.ipynb"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -58,18 +51,11 @@ docstring-code-format = true
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
-extend-select = [
-    "I",
-    "D",
-]
+extend-select = ["I", "D"]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"__init__.py" = [
-    "F401",
-]
-"src/scripts/main.py" = [
-    "I",
-]
+"__init__.py" = ["F401"]
+"src/scripts/main.py" = ["I"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false

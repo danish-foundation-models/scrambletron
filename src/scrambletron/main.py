@@ -5,7 +5,12 @@ from pathlib import Path
 
 import typer
 
-from scrambletron.utils import create_analyzer, create_anonymizer
+from .utils import (
+    create_analyzer,
+    create_anonymizer,
+    create_batch_analyzer,
+    create_batch_anonymizer,
+)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -47,19 +52,21 @@ def anonymize_file(file: Path, output: Path, language: str = "da"):
         output (Path): Path to save the output
         language (str, optional): Language of the text. Used for selecting relevant models. Defaults to "da".
     """
-    text = file.open().read()
+    texts = file.open().readlines()
+    analyzer = create_batch_analyzer()
+    analysis_result = analyzer.analyze_iterator(texts, language=language)
 
-    analyzer = create_analyzer()
-    analysis_result = analyzer.analyze(text, language=language)
+    # Create a mapping between entity types and counters
+    # entity_mapping = dict()
 
-    anonymizer = create_anonymizer()
-    result = anonymizer.anonymize(
-        text=text,
-        analyzer_results=analysis_result,
+    anonymizer = create_batch_anonymizer()
+    results = anonymizer.anonymize_list(
+        texts=texts,
+        recognizer_results_list=analysis_result,
         # operators={
         #     "DEFAULT": OperatorConfig(
         #         "entity_replacer", {"entity_mapping": entity_mapping}
         #     )
         # },
     )
-    output.open(mode="w").write(result.text)
+    output.open(mode="w").writelines(results)
