@@ -7,7 +7,7 @@ if t.TYPE_CHECKING:
     from presidio_anonymizer import AnonymizerEngine, BatchAnonymizerEngine
 
 
-def create_analyzer() -> "AnalyzerEngine":
+def create_analyzer(device: str = "cpu") -> "AnalyzerEngine":
     """Create a analyzer engine using Presidio.
 
     Returns:
@@ -100,7 +100,7 @@ def create_analyzer() -> "AnalyzerEngine":
         entity_mapping=entity_mapping,
         flat_ner=False,
         multi_label=True,
-        map_location="cpu",
+        map_location=device
     )
 
     analyzer.registry.add_recognizer(gliner_recognizer)
